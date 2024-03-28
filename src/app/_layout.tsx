@@ -73,6 +73,10 @@ function RootLayoutNav() {
                         options={{ headerShown: false }}
                       />
                       <Stack.Screen
+                        name="SearchModal"
+                        options={{ presentation: 'modal', headerShown: false }}
+                      />
+                      <Stack.Screen
                         name="user"
                         options={{ headerShown: false }}
                       />

@@ -1,24 +1,55 @@
-import { StyleSheet, TextBase, TextInput, useColorScheme } from "react-native";
+import {
+  Alert,
+  Pressable,
+  Share,
+  StyleSheet,
+  TextBase,
+  TextInput,
+  useColorScheme,
+} from "react-native";
 import React, { memo } from "react";
 import { Avatar, Image, Input, Text, TextArea, View, XStack } from "tamagui";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import Feather from "react-native-vector-icons/Feather";
 import moment from "moment";
-import { usePost } from "../../providers/PostProvider";
-import CommentBottomSheet from "./CommentSheet";
-import PostInfoSheet from "./PostInfo";
 
 type PostItemProps = {
   postItem: any;
+  handleOpenComments: any;
+  handleOpenPostInfo: any;
 };
-const PostItem = ({ postItem }: PostItemProps) => {
+const PostItem = ({
+  postItem,
+  handleOpenComments,
+  handleOpenPostInfo,
+}: PostItemProps) => {
   const uploadedTime = moment
     .duration(moment().diff(moment(new Date(postItem?.createdAt))))
     .humanize();
   const iconColor = useColorScheme() === "dark" ? "white" : "black";
 
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message: `https://sufferer.vercel.app/post/${postItem._id}`,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error: any) {
+      Alert.alert(error.message);
+    }
+  };
+
   return (
-    <View className="">
+    <View className="border-y-[.5px] border-y-neutral-300">
       <View
         className="flex-row justify-between items-center pl-4 py-3 border-b-neutral-300"
         style={{
@@ -40,7 +71,16 @@ const PostItem = ({ postItem }: PostItemProps) => {
             </Text>
           </View>
         </View>
-        <PostInfoSheet creator={postItem?.creator} color={iconColor}/>
+        <Pressable
+          onPress={() => handleOpenPostInfo(postItem)}
+          className="px-6 py-2"
+        >
+          <FontAwesome6Icon
+            name="ellipsis-vertical"
+            size={16}
+            color={iconColor}
+          />
+        </Pressable>
       </View>
       <View className="">
         {postItem?.image ? (
@@ -64,8 +104,15 @@ const PostItem = ({ postItem }: PostItemProps) => {
       <View className="px-4">
         <XStack space>
           <FontAwesome6Icon name="heart" size={25} color={iconColor} />
-          <CommentBottomSheet creatorImage={postItem?.creator?.image} color={iconColor}/>
-          <Feather name="send" size={25} color={iconColor} />
+          <FontAwesome
+            name="comment-o"
+            size={25}
+            color={iconColor}
+            onPress={() => handleOpenComments(postItem)}
+          />
+          <Pressable onPress={onShare}>
+            <Feather name="send" size={25} color={iconColor} />
+          </Pressable>
         </XStack>
         <View className="flex-row justify-between items-center">
           <Text className="mt-1">{postItem?.likes?.length} likes</Text>
@@ -81,7 +128,7 @@ const PostItem = ({ postItem }: PostItemProps) => {
       <View className="px-4 flex-row items-center justify-between">
         <TextInput
           placeholder="Add a comment"
-          placeholderTextColor={"#919191"} 
+          placeholderTextColor={"#919191"}
           className="text-md py-2 max-w-[90%] w-[90%] text-white"
         />
         <FontAwesome6Icon name="circle-arrow-up" color={"#0096FF"} size={18} />

@@ -33,7 +33,11 @@ const MainPageHeader = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
           name="arrow-left-long"
           size={20}
           color={colorScheme === "dark" ? "white" : "black"}
-          onPress={() => router.push("/user/(main)/")}
+          onPress={() => {
+            if (router.canGoBack()) {
+              router.back();
+            }
+          }}
         />
         <Text className="ml-7 text-xl">s.ahilbishnoi</Text>
       </View>

@@ -1,22 +1,25 @@
 import {
   Animated,
   ColorSchemeName,
-  FlatList,
   StatusBar,
   StyleSheet,
   useColorScheme,
 } from "react-native";
-import React from "react";
+import React, { useCallback, useRef } from "react";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
-import { ScrollView, Text, View } from "tamagui";
+import { Text, View } from "tamagui";
 import { Link } from "expo-router";
 import PostItem from "../../../components/PostItem/PostItem";
-import { DummyPosts } from "../../../constants/Posts";
-const PORT = "http://192.168.3.72:3000";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { usePost } from "../../../providers/PostProvider";
+import CommentSheet from "../../../components/BottomSheet/CommentSheet";
+import PostInfoSheet from "../../../components/BottomSheet/PostInfoSheet";
+import usePostsList from "../../../api/posts";
+import { FlashList } from "@shopify/flash-list";
 
 const index = () => {
   const colorScheme = useColorScheme();
-  const [posts, setPosts] = React.useState(DummyPosts.reverse());
+  const { allPosts, setPostData } = usePost();
 
   //! Header Animation Code
   const scrollY = new Animated.Value(0);
@@ -26,22 +29,26 @@ const index = () => {
     outputRange: [0, -80],
   });
 
-  // //! Getting posts
-  // const fetchInitialPosts = async () => {
-  //   try {
-  //     const postsResponse = await fetch(`${PORT}/api/posts/allposts`);
-  //     const postsData = await postsResponse.json();
-  //     setPosts(postsData.posts);
-  //     console.log(postsData.posts);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  //! Getting posts
+  usePostsList();
 
-  // React.useEffect(() => {
-  //   fetchInitialPosts();
-  //   console.log("post fetched");
-  // }, []);
+  //! Sheet ref
+  const commentSheetRef = useRef<BottomSheetModal>(null);
+  const costInfoSheetRef = useRef<BottomSheetModal>(null);
+
+  //! Bottom sheet functions
+  const handleOpenComments = useCallback(async (data: any) => {
+    setPostData(data);
+    if (commentSheetRef.current) {
+      commentSheetRef?.current?.present();
+    }
+  }, []);
+  const handleOpenPostInfo = (data: any) => {
+    setPostData(data);
+    if (costInfoSheetRef.current) {
+      costInfoSheetRef?.current?.present();
+    }
+  };
 
   return (
     <View className="bg-white flex-1 dark:bg-black">
@@ -49,33 +56,30 @@ const index = () => {
       <Animated.View
         style={{
           transform: [{ translateY: headerTranslateY }],
-          borderBottomWidth: 0.5,
         }}
-        className="absolute top-0 left-0 right-0 z-[1] border-neutral-300 "
+        className="absolute top-0 left-0 right-0 z-[1] "
       >
         <MainPageHeader colorScheme={colorScheme} />
       </Animated.View>
-      {/* <ScrollView
+      <FlashList
         onScroll={(event) =>
           scrollY.setValue(event.nativeEvent.contentOffset.y)
         }
-        style={{ gap: 10, paddingTop: 65, paddingBottom: 10 }}
-      >
-        {posts.map((post) => (
-          <PostItem postItem={post} key={post._id} />
-        ))}
-      </ScrollView> */}
-
-      <FlatList
-        onScroll={(event) =>
-          scrollY.setValue(event.nativeEvent.contentOffset.y)
-        }
-        contentContainerStyle={{ gap: 10, paddingTop: 65, paddingBottom: 10 }}
-        data={posts}
+        contentContainerStyle={{ paddingTop: 65 }}
+        data={allPosts}
         renderItem={({ item }: { item: any }) => {
-          return <PostItem postItem={item} />;
+          return (
+            <PostItem
+              postItem={item}
+              handleOpenComments={handleOpenComments}
+              handleOpenPostInfo={handleOpenPostInfo}
+            />
+          );
         }}
+        estimatedItemSize={allPosts.length || 5}
       />
+      <CommentSheet ref={commentSheetRef} />
+      <PostInfoSheet ref={costInfoSheetRef} />
     </View>
   );
 };

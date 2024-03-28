@@ -40,10 +40,9 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name="createPost"
-        
         options={{
           title: "Post",
-          headerShown: false,
+          // headerShown: false,
           tabBarIcon: ({ color }) => (
             <FontAwesome6 name="plus" size={20} color={color} />
           ),

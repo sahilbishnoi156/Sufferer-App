@@ -1,68 +1,71 @@
-import React, { useCallback, useMemo, useRef } from "react";
-import { View, Text, Pressable, BackHandler, ScrollView } from "react-native";
-import { BottomSheetFooter, BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
-import FontAwesome from "react-native-vector-icons/FontAwesome6";
-import { Avatar, Button, Paragraph, XStack } from "tamagui";
+import { StyleSheet, Text, View, useColorScheme } from "react-native";
+import React, { forwardRef, useCallback, useMemo } from "react";
+import { BottomSheetBackdrop, BottomSheetFooter, BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import { Avatar, Button, Paragraph } from "tamagui";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Feather from "react-native-vector-icons/Feather";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
+import { usePost } from "../../providers/PostProvider";
 
-const PostInfoSheet = ({ creator, color }: any) => {
-  // ref
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+//! COmponent Types
+interface Props {}
+type Ref = BottomSheetModal;
 
-  // variables
+const PostInfoSheet = forwardRef<Ref, Props>((props, ref) => {
+  const { postData} = usePost();
+
+  //* variables
   const snapPoints = useMemo(() => ["47%", "47%"], []);
+  const color = useColorScheme() === "dark" ? "white" : "black";
+  const backgroundColor = useColorScheme() === "dark" ? "dark" : "white";
 
-  // callbacks
-  const handlePresentModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.present();
-  }, []);
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log("handleSheetChanges", index);
-  }, []);
-
-  const backgroundColor = color === "black" ? "white" : "black";
-  // renders
-  
+  //! Footer Component
   const renderFooter = useCallback(
     (props: any) => (
       <BottomSheetFooter {...props}>
-        <OptionButtons/>
+        <OptionButtons />
       </BottomSheetFooter>
     ),
     []
   );
-  return (
-    <>
-      <Pressable onPress={handlePresentModalPress} className=" px-4 py-2">
-        <FontAwesome name="ellipsis-vertical" size={16} color={color} />
-      </Pressable>
-      <BottomSheetModal
-        ref={bottomSheetModalRef}
-        index={1}
-        snapPoints={snapPoints}
-        style={{overflow: "hidden"}}
-        onChange={handleSheetChanges}
-        handleStyle={{ backgroundColor: backgroundColor, borderRadius: 50 }}
-        handleIndicatorStyle={{ backgroundColor: color, borderBottomWidth: 0, }}
-        footerComponent={renderFooter}
-      >
-        <BottomSheetView
-          style={{ backgroundColor: backgroundColor, height: "100%", }}
-        >
-          <CreaterSection creator={creator} />
-        </BottomSheetView>
-      </BottomSheetModal>
-    </>
+
+  //! Backdrop Component
+  // renders
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        pressBehavior={"close"}
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+      />
+    ),
+    []
   );
-};
+  return (
+    <BottomSheetModal
+      ref={ref}
+      index={0}
+      snapPoints={snapPoints}
+      footerComponent={renderFooter}
+      backdropComponent={renderBackdrop}
+    >
+      <BottomSheetView
+        style={{ backgroundColor: backgroundColor, height: "100%" }}
+      >
+        <CreaterSection creator={postData?.creator} />
+      </BottomSheetView>
+    </BottomSheetModal>
+  );
+});
+
 export default PostInfoSheet;
+
+const styles = StyleSheet.create({});
 
 const OptionButtons = () => {
   return (
-    <View className="flex-row px-6 py-4 pt-2 bg-white dark:bg-black"
-    >
+    <View className="flex-row px-6 py-4 pt-2 bg-white dark:bg-black">
       <View className="mr-7 items-center">
         <Button
           icon={<Icon name="bookmark-o" size={25} />}
@@ -106,6 +109,7 @@ const OptionButtons = () => {
     </View>
   );
 };
+
 const CreaterSection = ({ creator }: any) => {
   return (
     <View className="mt-5 border-y-[.5px] border-neutral-300  dark:border-neutral-50/20 p-5">

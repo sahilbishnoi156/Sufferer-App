@@ -2,7 +2,7 @@ import React, { PropsWithChildren, createContext, useContext } from "react";
 
 type AuthData = {
   isLoggedIn: boolean;
-  profile: {} | null;
+  profile: any;
   loading: boolean;
   error: Error | null;
 };
@@ -15,7 +15,7 @@ const AuthContext = createContext<AuthData>({
 const PORT = 'http://192.168.3.72:3000';
 
 export default function AuthProvider({ children }: PropsWithChildren) {
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(true);
   const [profile, setProfile] = React.useState(null);
   const [error, setError] = React.useState<Error | null>(null)
   const [loading, setLoading] = React.useState(true);
