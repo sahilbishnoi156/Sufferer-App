@@ -13,6 +13,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import Feather from "react-native-vector-icons/Feather";
 import moment from "moment";
+import { Link } from "expo-router";
 
 type PostItemProps = {
   postItem: any;
@@ -56,21 +57,23 @@ const PostItem = ({
           borderBottomWidth: postItem?.image ? 0 : 0.5,
         }}
       >
-        <View className="flex-row items-center">
-          <Avatar circular size="$2.5">
-            <Avatar.Image
-              accessibilityLabel="Cam"
-              src={postItem?.creator?.image}
-            />
-            <Avatar.Fallback backgroundColor="$blue10" />
-          </Avatar>
-          <View>
-            <Text className="ml-2">{postItem?.creator?.username}</Text>
-            <Text className="ml-2 text-[10px] text-neutral-500">
-              uploaded · {uploadedTime} ago
-            </Text>
-          </View>
-        </View>
+        <Link asChild href={`/user/userprofile/${postItem?.creator?.username}`}>
+          <Pressable className="flex-row items-center">
+            <Avatar circular size="$2.5">
+              <Avatar.Image
+                accessibilityLabel="Cam"
+                src={postItem?.creator?.image}
+              />
+              <Avatar.Fallback backgroundColor="$blue10" />
+            </Avatar>
+            <View>
+              <Text className="ml-2">{postItem?.creator?.username}</Text>
+              <Text className="ml-2 text-[10px] text-neutral-500">
+                uploaded · {uploadedTime} ago
+              </Text>
+            </View>
+          </Pressable>
+        </Link>
         <Pressable
           onPress={() => handleOpenPostInfo(postItem)}
           className="px-6 py-2"

@@ -11,13 +11,13 @@ import {
 import React, { useCallback } from "react";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome";
 import { Avatar, Text, View } from "tamagui";
-import { useUser } from "../../../providers/PostProvider";
 import { FlashList } from "@shopify/flash-list";
-import UserItem from "../../../components/User/UserItem";
 import ContentLoader, { Rect, Circle, Path } from "react-content-loader/native";
 import { QueryClient } from "@tanstack/react-query";
 import { RefreshControl } from "react-native-gesture-handler";
 import { Link } from "expo-router";
+import { useUser } from "../../../../providers/PostProvider";
+import UserItem from "../../../../components/User/UserItem";
 const PORT = "http://192.168.3.72:3000";
 
 const search = () => {

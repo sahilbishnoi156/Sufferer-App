@@ -2,16 +2,14 @@ import { Link, withLayoutContext } from "expo-router";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { Avatar, Button, Paragraph, View } from "tamagui";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import Octicons from "react-native-vector-icons/Octicons";
 import { useColorScheme, Text } from "react-native";
-import { useAuth } from "../../../../providers/AuthProvider";
+import { useAuth } from "../../../../../providers/AuthProvider";
+import SettingSheet from "../../../../../components/BottomSheet/CurrentProfileSheet";
 
 const TopTabs = withLayoutContext(createMaterialTopTabNavigator().Navigator);
 
 export default function OrderListNavigator() {
-  const {
-    profile: { user },
-  } = useAuth();
+  const { profile: user } = useAuth();
   return (
     <View className="flex-1">
       <ProfileHeader username={user.username} />
@@ -19,7 +17,7 @@ export default function OrderListNavigator() {
       <TopTabs
         screenOptions={{
           tabBarIndicatorStyle: { backgroundColor: "black", height: 1.2 },
-          tabBarStyle: {shadowColor: 'transparent'}
+          tabBarStyle: { shadowColor: "transparent" },
         }}
       >
         <TopTabs.Screen
@@ -53,13 +51,7 @@ const ProfileHeader = ({ username }: any) => {
     <View className="flex-row justify-between p-4 items-center bg-white dark:bg-black border-b-[1px] border-b-neutral-300">
       <Text className="ml-2 text-xl">@ {username}</Text>
       <View>
-        <Link href={"/user/messages"} asChild>
-          <Ionicons
-            name="menu"
-            size={25}
-            color={colorScheme === "dark" ? "white" : "black"}
-          />
-        </Link>
+        <SettingSheet/>
       </View>
     </View>
   );
@@ -102,8 +94,8 @@ const Profile = ({ user }: any) => {
         </Paragraph>
       </View>
       <View className="mt-5" style={{ flexDirection: "row", gap: 10 }}>
-        <Button size={'$3'}>Edit profile</Button>
-        <Button size={'$3'}>Settings</Button>
+        <Button size={"$3"}>Edit profile</Button>
+        <Button size={"$3"}>Settings</Button>
       </View>
     </View>
   );

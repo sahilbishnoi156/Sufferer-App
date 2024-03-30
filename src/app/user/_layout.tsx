@@ -1,22 +1,30 @@
-import { useSegments, withLayoutContext } from "expo-router";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { View, Text } from "react-native";
+import React from "react";
+import { Redirect, Stack } from "expo-router";
+import { useAuth } from "../../providers/AuthProvider";
 
-const TopTabs = withLayoutContext(createMaterialTopTabNavigator().Navigator);
+const _layout = () => {
+  const { isLoggedIn } = useAuth();
 
-export default function OrderListNavigator() {
-  const segments = useSegments();
+  if (!isLoggedIn) {
+    return <Redirect href={"/"} />;
+  }
   return (
-    <TopTabs
-      screenOptions={{
-        swipeEnabled: segments[2] === undefined ? true : false,
-        tabBarContentContainerStyle: {
-          backgroundColor: "blue",
-          display: "none",
-        },
-      }}
-    >
-      <TopTabs.Screen name="(main)" options={{ title: "Home" }} />
-      <TopTabs.Screen name="messages" options={{ title: "messages" }} />
-    </TopTabs>
+    <Stack>
+      <Stack.Screen
+        name="home"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="userprofile"
+        options={{
+          headerShown: false,
+        }}
+      />
+    </Stack>
   );
-}
+};
+
+export default _layout;

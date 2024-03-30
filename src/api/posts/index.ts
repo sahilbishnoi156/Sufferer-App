@@ -1,6 +1,33 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { usePost } from "../../providers/PostProvider";
 const PORT = "http://192.168.3.72:3000";
+
+//! Helper Function
+const fetchPosts = async (props: any) => {
+  try {
+    const response = await fetch(`${PORT}/api/mobileApp/posts?_page=${props.pageParam}`)
+    return response.json();
+  } catch (error) {
+    if (error instanceof Error) throw new Error(error.message);
+    else throw new Error("Something went wrong.");
+  }
+};
+
+export function usePosts() {
+  return useInfiniteQuery({
+    queryKey: ["feed"],
+    queryFn: fetchPosts,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      return lastPage.nextPage;
+    },
+  });
+}
 
 //! Get Posts
 export default function usePostsList() {
@@ -15,6 +42,8 @@ export default function usePostsList() {
     },
   });
 }
+
+
 
 //! Get Post with id
 export const useGetPost = (id: number) => {

@@ -2,7 +2,7 @@ import { Link, Tabs } from "expo-router";
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import Octicons from "react-native-vector-icons/Octicons";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import { useColorScheme } from "react-native";
+import { Pressable, useColorScheme } from "react-native";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -42,9 +42,13 @@ export default function TabLayout() {
         name="createPost"
         options={{
           title: "Post",
-          // headerShown: false,
+          headerShown: false,
           tabBarIcon: ({ color }) => (
-            <FontAwesome6 name="plus" size={20} color={color} />
+            <Link href={"/user/home/story"} asChild>
+              <Pressable className="h-full w-full flex items-center justify-center">
+                <FontAwesome6 name="plus" size={20} color={color} />
+              </Pressable>
+            </Link>
           ),
         }}
       />

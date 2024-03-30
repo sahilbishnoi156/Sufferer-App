@@ -58,8 +58,8 @@ function RootLayoutNav() {
   return (
     <TamaguiProvider config={config} defaultTheme={colorScheme as any}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <AuthProvider>
-          <QueryProvider>
+        <QueryProvider>
+          <AuthProvider>
             <PostProvider>
               <GestureHandlerRootView style={{ flex: 1 }}>
                 <BottomSheetModalProvider>
@@ -74,7 +74,11 @@ function RootLayoutNav() {
                       />
                       <Stack.Screen
                         name="SearchModal"
-                        options={{ presentation: 'modal', headerShown: false }}
+                        options={{ presentation: "modal", headerShown: false }}
+                      />
+                      <Stack.Screen
+                        name="SelectImage"
+                        options={{ headerShown: false }}
                       />
                       <Stack.Screen
                         name="user"
@@ -89,8 +93,8 @@ function RootLayoutNav() {
                 </BottomSheetModalProvider>
               </GestureHandlerRootView>
             </PostProvider>
-          </QueryProvider>
-        </AuthProvider>
+          </AuthProvider>
+        </QueryProvider>
       </ThemeProvider>
     </TamaguiProvider>
   );

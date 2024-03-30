@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Animated,
   ColorSchemeName,
   StatusBar,
@@ -9,13 +10,13 @@ import React, { useCallback, useRef } from "react";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import { Text, View } from "tamagui";
 import { Link } from "expo-router";
-import PostItem from "../../../components/PostItem/PostItem";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { usePost } from "../../../providers/PostProvider";
-import CommentSheet from "../../../components/BottomSheet/CommentSheet";
-import PostInfoSheet from "../../../components/BottomSheet/PostInfoSheet";
-import usePostsList from "../../../api/posts";
 import { FlashList } from "@shopify/flash-list";
+import { usePost } from "../../../../providers/PostProvider";
+import usePostsList, { usePosts } from "../../../../api/posts";
+import PostItem from "../../../../components/PostItem/PostItem";
+import CommentSheet from "../../../../components/BottomSheet/CommentSheet";
+import PostInfoSheet from "../../../../components/BottomSheet/PostInfoSheet";
 
 const index = () => {
   const colorScheme = useColorScheme();
@@ -31,6 +32,7 @@ const index = () => {
 
   //! Getting posts
   usePostsList();
+  const { data, error, fetchNextPage, hasNextPage, isFetching, status } = usePosts();
 
   //! Sheet ref
   const commentSheetRef = useRef<BottomSheetModal>(null);
@@ -50,6 +52,16 @@ const index = () => {
     }
   };
 
+  if (status === "error") {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <Text>Something went wrong</Text>
+      </View>
+    );
+  }
+
+  const Posts = data?.pages.flatMap(page => page.posts);
+
   return (
     <View className="bg-white flex-1 dark:bg-black">
       <StatusBar backgroundColor={colorScheme !== "dark" ? "white" : "black"} />
@@ -61,23 +73,42 @@ const index = () => {
       >
         <MainPageHeader colorScheme={colorScheme} />
       </Animated.View>
-      <FlashList
-        onScroll={(event) =>
-          scrollY.setValue(event.nativeEvent.contentOffset.y)
-        }
-        contentContainerStyle={{ paddingTop: 65 }}
-        data={allPosts}
-        renderItem={({ item }: { item: any }) => {
-          return (
-            <PostItem
-              postItem={item}
-              handleOpenComments={handleOpenComments}
-              handleOpenPostInfo={handleOpenPostInfo}
-            />
-          );
-        }}
-        estimatedItemSize={allPosts.length || 5}
-      />
+      {status === "success" ? (
+        <FlashList
+          onScroll={(event) =>
+            scrollY.setValue(event.nativeEvent.contentOffset.y)
+          }
+          contentContainerStyle={{ paddingTop: 65 }}
+          data={Posts}
+          renderItem={({ item }: { item: any }) => {
+            return (
+              <PostItem
+                postItem={item}
+                handleOpenComments={handleOpenComments}
+                handleOpenPostInfo={handleOpenPostInfo}
+              />
+            );
+          }}
+          estimatedItemSize={1000}
+          refreshing={isFetching}
+          onRefresh={() => {
+            if(hasNextPage){
+              fetchNextPage()
+            }
+          }}
+          onEndReached={() => {
+            if(hasNextPage){
+              fetchNextPage()
+            }
+          }}
+          onEndReachedThreshold={0.1}
+        />
+      ) : (
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator />
+        </View>
+      )}
+
       <CommentSheet ref={commentSheetRef} />
       <PostInfoSheet ref={costInfoSheetRef} />
     </View>
@@ -98,7 +129,7 @@ const MainPageHeader = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
         <Text className="ml-2 text-2xl">Sufferer</Text>
       </View>
       <View>
-        <Link href={"/user/messages"} asChild>
+        <Link href={"/user/home/messages"} asChild>
           <FontAwesome6Icon
             name="facebook-messenger"
             size={22}

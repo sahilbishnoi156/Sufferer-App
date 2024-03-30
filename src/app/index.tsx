@@ -5,44 +5,45 @@ import { useAuth } from "../providers/AuthProvider";
 import { Text } from "tamagui";
 
 const index = () => {
-  const { isLoggedIn, loading, error } = useAuth();
-  const colorScheme = useColorScheme();
+  // const { isLoggedIn, loading, error } = useAuth();
+  // const colorScheme = useColorScheme();
 
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: colorScheme === "dark" ? "black" : "white",
-        }}
-      >
-        <ActivityIndicator size={"large"} />
-      </View>
-    );
-  }
-  if (error) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: colorScheme === "dark" ? "black" : "white",
-        }}
-      >
-        <Text>Something Went Wrong</Text>
-        <Text>Please restart the application</Text>
-      </View>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <View
+  //       style={{
+  //         flex: 1,
+  //         justifyContent: "center",
+  //         alignItems: "center",
+  //         backgroundColor: colorScheme === "dark" ? "black" : "white",
+  //       }}
+  //     >
+  //       <ActivityIndicator size={"large"} />
+  //     </View>
+  //   );
+  // }
+  // if (error) {
+  //   return (
+  //     <View
+  //       style={{
+  //         flex: 1,
+  //         justifyContent: "center",
+  //         alignItems: "center",
+  //         backgroundColor: colorScheme === "dark" ? "black" : "white",
+  //       }}
+  //     >
+  //       <Text>Something Went Wrong</Text>
+  //       <Text>Please restart the application</Text>
+  //     </View>
+  //   );
+  // }
 
-  if (!isLoggedIn) {
-    return <Redirect href={"/(auth)/sign-in"} />;
-  }
+  // if (!isLoggedIn) {
+  //   return <Redirect href={"/(auth)/sign-in"} />;
+  // }
 
-  return <Redirect href={"/user/(main)/"} />;
+  return <Redirect href={"/(auth)/sign-in"} />;
+  // return <Redirect href={"/user/home/"} />;
 };
 
 export default index;

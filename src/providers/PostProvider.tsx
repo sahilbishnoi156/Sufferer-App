@@ -15,6 +15,8 @@ type PostContextType = {
 type UserContextType = {
   suggestedUsers: any;
   setSuggestedUsers: (value: any) => void;
+  pendingUser: any,
+  setPendingUser: (value: any) => void,
 };
 
 const PostContext = createContext<PostContextType>({
@@ -52,12 +54,18 @@ export const usePost = () => useContext(PostContext);
 const UserContext = createContext<UserContextType>({
   suggestedUsers: [],
   setSuggestedUsers: () => {},
+  pendingUser: {},
+  setPendingUser: (value: any) => {},
 });
+
 export function UserProvider({ children }: PropsWithChildren) {
   const [suggestedUsers, setSuggestedUsers] = React.useState([]);
+  const [pendingUser, setPendingUser] = React.useState({});
 
   return (
-    <UserContext.Provider value={{ suggestedUsers, setSuggestedUsers }}>
+    <UserContext.Provider
+      value={{ suggestedUsers, setSuggestedUsers, pendingUser, setPendingUser }}
+    >
       {children}
     </UserContext.Provider>
   );
